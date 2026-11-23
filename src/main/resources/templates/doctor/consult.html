@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('接诊管理')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: doctor-sidebar('consult')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('接诊管理', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head"><h2>🩺 进行中的接诊</h2>
+                    <div class="hint">就诊流程：签到 → 问诊 → （检查）→ 开方 → 完成（模板方法推进）</div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>单号</th><th>患者</th><th>挂号类型</th><th>时段</th><th>诊断</th><th>操作</th></tr></thead>
+                        <tbody>
+                        <tr th:each="o : ${ongoing}">
+                            <td th:text="${o.regNo}" style="font-size:12px"></td>
+                            <td th:text="${o.patientName}"></td>
+                            <td th:text="${T(com.hospital.util.SlotText).regType(o.regType)}"></td>
+                            <td th:text="${T(com.hospital.util.SlotText).slot(o.timeSlot)}"></td>
+                            <td th:text="${o.diagnosis} ?: '未开方'"></td>
+                            <td><a class="btn sm" th:href="@{/doctor/visit/{id}(id=${o.registrationId})}">继续接诊</a></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(ongoing)}"><td colspan="6" style="color:var(--text-muted)">暂无进行中的接诊，可从「今日患者列表」发起新接诊</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h2>✅ 今日已完成</h2></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>单号</th><th>患者</th><th>时段</th><th>挂号费</th><th>操作</th></tr></thead>
+                        <tbody>
+                        <tr th:each="r : ${todayRegs}" th:if="${r.status == 'VISITED'}">
+                            <td th:text="${r.regNo}" style="font-size:12px"></td>
+                            <td th:text="${r.patientName}"></td>
+                            <td th:text="${T(com.hospital.util.SlotText).slot(r.timeSlot)}"></td>
+                            <td th:text="'¥' + ${r.fee}"></td>
+                            <td><a class="btn sm ghost" th:href="@{/doctor/patient/records/{pid}(pid=${r.patientId})}">查看病历</a></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(todayRegs)}"><td colspan="5" style="color:var(--text-muted)">今天暂无已完成接诊</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

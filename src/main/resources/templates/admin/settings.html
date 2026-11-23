@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('系统设置')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: admin-sidebar('settings')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('系统设置', ${user})"></header>
+        <div class="content">
+            <div class="card" style="max-width:640px">
+                <div class="card-head"><h2>🔧 系统参数</h2>
+                    <div class="hint">保存后全站即时生效（如品牌名称、客服电话）</div></div>
+                <form method="post" th:action="@{/admin/settings}">
+                    <div class="form-row" th:each="s : ${settingList}">
+                        <label th:text="${s.remark} + '（' + ${s.settingKey} + '）'"></label>
+                        <input type="text" th:name="${s.settingKey}" th:value="${s.settingValue}">
+                    </div>
+                    <button class="btn" type="submit">保存设置</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

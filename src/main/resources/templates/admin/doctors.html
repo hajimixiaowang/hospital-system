@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('医生管理')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: admin-sidebar('doctors')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('医生管理', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head"><h2>➕ 新增医生</h2></div>
+                <form method="post" th:action="@{/admin/doctor/save}" class="form-grid" style="align-items:end">
+                    <div class="form-row" style="margin:0"><label>登录名</label>
+                        <input type="text" name="username" placeholder="如 guoyi" required></div>
+                    <div class="form-row" style="margin:0"><label>姓名</label>
+                        <input type="text" name="realName" required></div>
+                    <div class="form-row" style="margin:0"><label>科室</label>
+                        <select name="deptId" required>
+                            <option th:each="d : ${depts}" th:value="${d.id}" th:text="${d.name}"></option>
+                        </select></div>
+                    <div class="form-row" style="margin:0"><label>职称</label>
+                        <select name="title">
+                            <option value="主治医师">主治医师</option>
+                            <option value="副主任医师">副主任医师</option>
+                            <option value="主任医师">主任医师</option>
+                        </select></div>
+                    <div class="form-row" style="margin:0"><label>职称附加费</label>
+                        <input type="text" name="titleFee" placeholder="如 30.00"></div>
+                    <div class="form-row" style="margin:0"><label>擅长领域</label>
+                        <input type="text" name="goodAt" placeholder="逗号或顿号分隔"></div>
+                    <div class="form-row" style="margin:0;grid-column:1/-1"><label>简介</label>
+                        <input type="text" name="intro" placeholder="医生简介"></div>
+                    <button class="btn" type="submit">新增医生</button>
+                </form>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:10px">初始登录密码为 123456</div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h2>👨‍⚕️ 医生列表</h2></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>登录名</th><th>姓名</th><th>科室</th><th>职称</th><th>附加费</th><th>电话</th></tr></thead>
+                        <tbody>
+                        <tr th:each="d : ${doctors}">
+                            <td th:text="${d.username}"></td>
+                            <td th:text="${d.doctorName}"></td>
+                            <td th:text="${d.deptName}"></td>
+                            <td th:text="${d.title}"></td>
+                            <td th:text="'¥' + ${d.titleFee}"></td>
+                            <td th:text="${d.phone} ?: '—'"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

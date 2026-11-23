@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('排班查看')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: doctor-sidebar('schedules')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('我的排班', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head"><h2>🗓️ 我的排班（号源）</h2>
+                    <div class="hint">排班与放号由管理员统一维护</div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>号源编号</th><th>日期</th><th>时段</th><th>号数</th><th>剩余</th><th>状态</th></tr></thead>
+                        <tbody>
+                        <tr th:each="s : ${schedules}">
+                            <td th:text="${s.sourceNo}" style="font-size:12px"></td>
+                            <td th:text="${s.workDate}"></td>
+                            <td th:text="${T(com.hospital.util.SlotText).slot(s.timeSlot)}"></td>
+                            <td th:text="${s.totalCount}"></td>
+                            <td><span class="badge" th:classappend="${s.remainCount < 5} ? 'warning' : 'success'"
+                                    th:text="${s.remainCount}"></span></td>
+                            <td><span class="badge" th:classappend="${s.status=='OPEN'} ? 'success' : 'muted'"
+                                    th:text="${s.status=='OPEN'} ? '开放' : '关闭'"></span></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(schedules)}"><td colspan="6" style="color:var(--text-muted)">暂无排班，请联系管理员放号</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

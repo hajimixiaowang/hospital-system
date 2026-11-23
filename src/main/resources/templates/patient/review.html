@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('就诊评价')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: patient-sidebar('records')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('就诊评价', ${user})"></header>
+        <div class="content">
+            <div class="card" style="max-width:560px">
+                <div class="card-head"><h2>⭐ 评价本次就诊</h2></div>
+                <form method="post" th:action="@{/patient/review/{id}(id=${regId})}">
+                    <div class="form-row">
+                        <label>综合评分</label>
+                        <select name="rating" required>
+                            <option value="5">★★★★★ 非常满意</option>
+                            <option value="4">★★★★ 满意</option>
+                            <option value="3">★★★ 一般</option>
+                            <option value="2">★★ 不太满意</option>
+                            <option value="1">★ 很不满意</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label>评价内容（选填）</label>
+                        <textarea name="content" rows="4" placeholder="说说您的就医体验…"></textarea>
+                    </div>
+                    <button class="btn" type="submit">提交评价</button>
+                    <a class="btn ghost" th:href="@{/patient/records}">取消</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

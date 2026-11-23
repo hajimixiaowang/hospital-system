@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('医生工作台')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: doctor-sidebar('home')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('医生工作台', ${user})"></header>
+        <div class="content">
+
+            <div class="stat-grid">
+                <div class="stat">
+                    <div class="icon blue">👥</div>
+                    <div><div class="num" th:text="${stats.waitingToday}">0</div><div class="label">今日待接诊</div></div>
+                </div>
+                <div class="stat">
+                    <div class="icon green">✅</div>
+                    <div><div class="num" th:text="${stats.visitedToday}">0</div><div class="label">今日已接诊</div></div>
+                </div>
+                <div class="stat">
+                    <div class="icon amber">💰</div>
+                    <div><div class="num" th:text="'¥' + ${stats.incomeTotal}">0</div><div class="label">累计挂号收入</div></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h2>📋 今日预约（急诊优先置顶）</h2>
+                    <div class="hint">点击「进入操作台」按就诊流程接诊</div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>单号</th><th>患者</th><th>类型</th><th>挂号类型</th><th>时段</th><th>挂号费</th><th>状态</th><th>操作</th></tr></thead>
+                        <tbody>
+                        <tr th:each="r : ${todayRegs}" th:style="${r.regType=='EMERGENCY'} ? 'background:#fef2f2' : ''">
+                            <td th:text="${r.regNo}" style="font-size:12px"></td>
+                            <td th:text="${r.patientName}"></td>
+                            <td th:text="${T(com.hospital.util.SlotText).patientTypeText(r.patientType)}"></td>
+                            <td>
+                                <span th:text="${T(com.hospital.util.SlotText).regType(r.regType)}"></span>
+                                <span class="badge danger" th:if="${r.regType=='EMERGENCY'}">优先</span>
+                            </td>
+                            <td th:text="${T(com.hospital.util.SlotText).slot(r.timeSlot)}"></td>
+                            <td th:text="'¥' + ${r.fee}"></td>
+                            <td><span class="badge"
+                                  th:classappend="${r.status=='PAID'} ? 'success' : 'warning'"
+                                  th:text="${T(com.hospital.util.SlotText).regStatus(r.status)}"></span></td>
+                            <td>
+                                <a class="btn sm" th:href="@{/doctor/visit/{id}(id=${r.id})}"
+                                   th:if="${r.status=='BOOKED' or r.status=='PAID'}">进入操作台</a>
+                                <span th:if="${r.status=='VISITED'}" class="badge info">已就诊</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(todayRegs)}"><td colspan="8" style="color:var(--text-muted)">今天暂无预约</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h2>🩺 进行中的接诊</h2></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>单号</th><th>患者</th><th>诊断</th><th>操作</th></tr></thead>
+                        <tbody>
+                        <tr th:each="o : ${ongoing}">
+                            <td th:text="${o.regNo}" style="font-size:12px"></td>
+                            <td th:text="${o.patientName}"></td>
+                            <td th:text="${o.diagnosis} ?: '未开方'"></td>
+                            <td><a class="btn sm ghost" th:href="@{/doctor/visit/{id}(id=${o.registrationId})}">继续接诊</a></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(ongoing)}"><td colspan="4" style="color:var(--text-muted)">暂无进行中的接诊</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

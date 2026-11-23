@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('医生信息管理')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: doctor-sidebar('profile')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('医生信息管理', ${user})"></header>
+        <div class="content">
+            <div class="card" style="max-width:640px">
+                <div class="card-head"><h2>👨‍⚕️ 我的执业信息</h2>
+                    <div class="hint">简介与擅长领域将展示给患者（职称与挂号费由管理员维护）</div></div>
+                <form method="post" th:action="@{/doctor/profile}">
+                    <div class="form-row">
+                        <label>医生简介</label>
+                        <textarea name="intro" rows="3" th:text="${doctor.intro}"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <label>擅长领域（顿号或逗号分隔）</label>
+                        <input type="text" name="goodAt" th:value="${doctor.goodAt}">
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                        <div class="form-row"><label>所属科室</label>
+                            <input type="text" value="由管理员统一维护" disabled></div>
+                        <div class="form-row"><label>职称</label>
+                            <input type="text" th:value="${doctor.title}" disabled></div>
+                    </div>
+                    <button class="btn" type="submit">保存修改</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('订单管理')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: admin-sidebar('orders')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('订单管理', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head">
+                    <h2>📋 挂号订单</h2>
+                    <form method="get" th:action="@{/admin/orders}" style="display:flex;gap:8px">
+                        <select name="status" style="width:auto">
+                            <option value="">全部状态</option>
+                            <option value="BOOKED" th:selected="${statusFilter=='BOOKED'}">待支付</option>
+                            <option value="PAID" th:selected="${statusFilter=='PAID'}">已支付</option>
+                            <option value="VISITED" th:selected="${statusFilter=='VISITED'}">已就诊</option>
+                            <option value="CANCELLED" th:selected="${statusFilter=='CANCELLED'}">已取消</option>
+                        </select>
+                        <button class="btn sm" type="submit">筛选</button>
+                    </form>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>单号</th><th>患者</th><th>类型</th><th>科室/医生</th><th>就诊日期</th><th>时段</th><th>费用</th><th>状态</th><th>操作</th></tr></thead>
+                        <tbody>
+                        <tr th:each="o : ${orders}">
+                            <td th:text="${o.regNo}" style="font-size:12px"></td>
+                            <td th:text="${o.patientName}"></td>
+                            <td th:text="${T(com.hospital.util.SlotText).regType(o.regType)}"></td>
+                            <td th:text="${o.deptName} + ' / ' + ${o.doctorName}"></td>
+                            <td th:text="${o.workDate}"></td>
+                            <td th:text="${T(com.hospital.util.SlotText).slot(o.timeSlot)}"></td>
+                            <td th:text="'¥' + ${o.fee}"></td>
+                            <td><span class="badge"
+                                    th:classappend="${o.status=='BOOKED'} ? 'warning' : (${o.status=='PAID'} ? 'success' : (${o.status=='VISITED'} ? 'info' : 'muted'))"
+                                    th:text="${T(com.hospital.util.SlotText).regStatus(o.status)}"></span></td>
+                            <td>
+                                <form method="post" th:action="@{/admin/order/refund/{id}(id=${o.id})}"
+                                      th:if="${o.status=='BOOKED' or o.status=='PAID'}">
+                                    <button class="btn danger sm" type="submit"
+                                            th:onclick="return confirm('确认管理员退单？已支付将标记退款并回滚号源')">退单</button>
+                                </form>
+                                <span th:unless="${o.status=='BOOKED' or o.status=='PAID'}" style="font-size:12px;color:var(--text-muted)">—</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(orders)}"><td colspan="9" style="color:var(--text-muted)">暂无订单</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

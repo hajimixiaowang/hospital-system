@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 · 医诊通</title>
+    <link rel="stylesheet" th:href="@{/css/style.css?v=20261123b}">
+</head>
+<body>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="logo">🏥</div>
+        <h1>医诊通</h1>
+        <div class="sub">医院在线预约挂号与就诊平台</div>
+
+        <div class="msg error" th:if="${msg}" th:text="${msg}"></div>
+
+        <form method="post" th:action="@{/login}">
+            <div class="form-row">
+                <label>用户名</label>
+                <input type="text" name="username" placeholder="请输入用户名" required>
+            </div>
+            <div class="form-row">
+                <label>密码</label>
+                <input type="password" name="password" placeholder="请输入密码" required>
+            </div>
+            <button class="btn block" type="submit">登 录</button>
+        </form>
+        <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-muted)">
+            还没有账号？<a th:href="@{/register}" style="color:var(--primary)">患者注册</a>
+        </div>
+
+        <div class="demo">
+            <b>演示账号</b>（密码均为 123456，管理员为 admin123）<br>
+            管理员：admin ｜ 医生：zhangwei / lisi / wangfang / jiuzhen<br>
+            患者：p1（普通）/ p2（医保）/ p3（学生）
+        </div>
+    </div>
+</div>
+</body>
+</html>

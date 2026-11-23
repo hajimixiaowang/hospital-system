@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('公告查看')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: doctor-sidebar('announcements')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('医院公告', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head"><h2>📢 医院公告</h2></div>
+                <div th:each="a : ${announcements}" class="announce-item">
+                    <div class="t" th:text="${a.title}"></div>
+                    <div class="c" th:text="${a.content}"></div>
+                    <div class="d" th:text="'发布于 ' + ${#temporals.format(a.createTime, 'yyyy-MM-dd HH:mm')}"></div>
+                </div>
+                <div th:if="${#lists.isEmpty(announcements)}" style="color:var(--text-muted)">暂无公告</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

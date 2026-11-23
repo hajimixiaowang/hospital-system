@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('AI 助手')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: patient-sidebar('assistant')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('AI 助手', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head">
+                    <h2>🤖 智能导诊助手</h2>
+                    <div class="hint">基于院内知识库的检索式问答 · 知识库由管理员持续维护</div>
+                </div>
+
+                <div class="quick-questions">
+                    <button onclick="askQuick('怎么挂号？')">怎么挂号？</button>
+                    <button onclick="askQuick('可以退号吗？')">可以退号吗？</button>
+                    <button onclick="askQuick('挂号费多少钱？')">挂号费多少钱？</button>
+                    <button onclick="askQuick('医保怎么结算？')">医保怎么结算？</button>
+                    <button onclick="askQuick('感冒发烧看什么科？')">感冒发烧看什么科？</button>
+                    <button onclick="askQuick('夜间门诊几点？')">夜间门诊几点？</button>
+                </div>
+
+                <div class="chat-box" id="chatBox">
+                    <div class="chat-msg ai">
+                        <div class="bubble">您好！我是门诊智能助手 🤖<br>关于挂号流程、退号退款、费用结算、科室选择等问题都可以问我～</div>
+                    </div>
+                </div>
+
+                <form class="chat-input" onsubmit="return sendMsg()">
+                    <input type="text" id="qInput" placeholder="输入您的问题，回车发送…" autocomplete="off">
+                    <button class="btn" type="submit">发送</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const box = document.getElementById('chatBox');
+    function addMsg(text, who) {
+        const div = document.createElement('div');
+        div.className = 'chat-msg ' + who;
+        div.innerHTML = '<div class="bubble"></div>';
+        div.querySelector('.bubble').textContent = text;
+        box.appendChild(div);
+        box.scrollTop = box.scrollHeight;
+    }
+    function askQuick(q) { document.getElementById('qInput').value = q; sendMsg(); }
+    function sendMsg() {
+        const input = document.getElementById('qInput');
+        const q = input.value.trim();
+        if (!q) return false;
+        input.value = '';
+        addMsg(q, 'me');
+        const typing = document.createElement('div');
+        typing.className = 'typing'; typing.textContent = '小医思考中…';
+        box.appendChild(typing); box.scrollTop = box.scrollHeight;
+        fetch('/assistant/ask', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({question: q})
+        }).then(r => r.json()).then(d => {
+            typing.remove();
+            addMsg(d.answer, 'ai');
+        }).catch(() => { typing.remove(); addMsg('网络异常，请稍后再试。', 'ai'); });
+        return false;
+    }
+</script>
+</body>
+</html>

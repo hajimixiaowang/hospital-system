@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('知识库管理')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: admin-sidebar('knowledge')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('AI 知识库管理', ${user})"></header>
+        <div class="content">
+
+            <div class="card">
+                <div class="card-head"><h2>🧠 新增知识条目</h2>
+                    <div class="hint">患者/医生的 AI 助手按关键词匹配作答，条目即时生效</div></div>
+                <form method="post" th:action="@{/admin/knowledge/save}">
+                    <div class="form-grid" style="align-items:end">
+                        <div class="form-row" style="margin:0"><label>命中关键词（逗号分隔）</label>
+                            <input type="text" name="keywords" placeholder="如：体检,体检预约" required></div>
+                        <div class="form-row" style="margin:0"><label>分类</label>
+                            <select name="category">
+                                <option value="挂号">挂号</option>
+                                <option value="费用">费用</option>
+                                <option value="就诊">就诊</option>
+                                <option value="通用">通用</option>
+                            </select></div>
+                        <div class="form-row" style="margin:0"><label>回答内容</label>
+                            <input type="text" name="answer" required></div>
+                        <button class="btn" type="submit">新增</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h2>📚 知识条目列表</h2>
+                    <span class="badge info" th:text="'共 ' + ${#lists.size(items)} + ' 条'"></span></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>分类</th><th>关键词</th><th>回答</th><th>操作</th></tr></thead>
+                        <tbody>
+                        <tr th:each="k : ${items}">
+                            <td><span class="badge info" th:text="${k.category}"></span></td>
+                            <td th:text="${k.keywords}" style="max-width:240px;font-size:13px"></td>
+                            <td th:text="${k.answer}" style="max-width:420px;font-size:13px"></td>
+                            <td>
+                                <form method="post" th:action="@{/admin/knowledge/del/{id}(id=${k.id})}">
+                                    <button class="btn danger sm" type="submit"
+                                            th:onclick="return confirm('确认删除该知识条目？')">删除</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(items)}"><td colspan="4" style="color:var(--text-muted)">知识库为空，AI 助手将只回复兜底话术</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

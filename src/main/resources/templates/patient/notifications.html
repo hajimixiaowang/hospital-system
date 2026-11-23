@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('通知中心')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: patient-sidebar('notifications')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('通知中心', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head"><h2>🔔 我的通知</h2></div>
+                <div th:each="n : ${notifications}" class="announce-item">
+                    <div class="t">
+                        <span th:if="${n.status=='UNREAD'}" class="badge danger" style="margin-right:6px">未读</span>
+                        <span th:text="${n.title}"></span>
+                        <span class="badge muted" th:text="${n.type}"></span>
+                    </div>
+                    <div class="c" th:text="${n.content}"></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+                        <span class="d" th:text="${#temporals.format(n.createTime, 'yyyy-MM-dd HH:mm')}"></span>
+                        <form method="post" th:action="@{/patient/notify/read/{id}(id=${n.id})}" th:if="${n.status=='UNREAD'}">
+                            <button class="btn sm ghost" type="submit">标记已读</button>
+                        </form>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(notifications)}" style="color:var(--text-muted)">暂无通知</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

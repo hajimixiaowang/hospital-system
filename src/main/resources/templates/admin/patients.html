@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('患者管理')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: admin-sidebar('patients')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('患者管理', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head"><h2>👥 患者列表</h2></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>用户名</th><th>姓名</th><th>患者类型</th><th>手机号</th><th>注册时间</th><th>状态</th><th>操作</th></tr></thead>
+                        <tbody>
+                        <tr th:each="p : ${patients}">
+                            <td th:text="${p.username}"></td>
+                            <td th:text="${p.realName}"></td>
+                            <td th:text="${T(com.hospital.util.SlotText).patientTypeText(p.patientType)}"></td>
+                            <td th:text="${p.phone} ?: '—'"></td>
+                            <td th:text="${#temporals.format(p.createTime, 'yyyy-MM-dd')}"></td>
+                            <td><span class="badge" th:classappend="${p.status=='ACTIVE'} ? 'success' : 'danger'"
+                                    th:text="${p.status=='ACTIVE'} ? '正常' : '已禁用'"></span></td>
+                            <td>
+                                <form method="post" th:action="@{/admin/patient/toggle/{id}(id=${p.id})}">
+                                    <button class="btn danger sm" type="submit"
+                                            th:text="${p.status=='ACTIVE'} ? '禁用' : '启用'"></button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

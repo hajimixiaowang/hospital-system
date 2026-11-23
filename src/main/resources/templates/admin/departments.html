@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('科室管理')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: admin-sidebar('departments')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('科室管理', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head"><h2>➕ 新增科室</h2></div>
+                <form method="post" th:action="@{/admin/dept/save}" class="form-grid" style="align-items:end">
+                    <input type="hidden" name="id" value="">
+                    <div class="form-row" style="margin:0"><label>科室名称</label>
+                        <input type="text" name="name" placeholder="如 眼科" required></div>
+                    <div class="form-row" style="margin:0"><label>基础挂号费（元）</label>
+                        <input type="text" name="baseFee" placeholder="如 10.00" required></div>
+                    <div class="form-row" style="margin:0"><label>简介</label>
+                        <input type="text" name="intro" placeholder="选填"></div>
+                    <button class="btn" type="submit">新增科室</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h2>🏥 科室列表</h2></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>科室</th><th>基础挂号费</th><th>简介</th><th>操作</th></tr></thead>
+                        <tbody>
+                        <tr th:each="d : ${depts}">
+                            <td th:text="${d.name}"></td>
+                            <td th:text="'¥' + ${d.baseFee}"></td>
+                            <td th:text="${d.intro} ?: '—'"></td>
+                            <td>
+                                <form method="post" th:action="@{/admin/dept/del/{id}(id=${d.id})}">
+                                    <button class="btn danger sm" type="submit"
+                                            th:onclick="return confirm('确认删除该科室？')">删除</button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

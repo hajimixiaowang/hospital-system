@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('公告管理')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: admin-sidebar('announcements')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('公告管理', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head"><h2>📢 发布公告</h2></div>
+                <form method="post" th:action="@{/admin/announcement/save}">
+                    <div class="form-row"><label>标题</label>
+                        <input type="text" name="title" required></div>
+                    <div class="form-row"><label>内容</label>
+                        <textarea name="content" rows="3"></textarea></div>
+                    <button class="btn" type="submit">发布</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h2>📋 公告列表</h2></div>
+                <div th:each="a : ${announcements}" class="announce-item" style="display:flex;justify-content:space-between;align-items:center">
+                    <div>
+                        <div class="t" th:text="${a.title}"></div>
+                        <div class="c" th:text="${a.content}"></div>
+                        <div class="d" th:text="${#temporals.format(a.createTime, 'yyyy-MM-dd HH:mm')}"></div>
+                    </div>
+                    <form method="post" th:action="@{/admin/announcement/del/{id}(id=${a.id})}">
+                        <button class="btn danger sm" type="submit"
+                                th:onclick="return confirm('确认删除该公告？')">删除</button>
+                    </form>
+                </div>
+                <div th:if="${#lists.isEmpty(announcements)}" style="color:var(--text-muted)">暂无公告</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

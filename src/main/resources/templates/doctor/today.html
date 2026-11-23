@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('今日患者列表')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: doctor-sidebar('today')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('今日患者列表', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head"><h2>👥 今日预约患者（急诊置顶）</h2></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>单号</th><th>患者</th><th>联系方式</th><th>类型</th><th>挂号类型</th><th>时段</th><th>挂号费</th><th>状态</th><th>操作</th></tr></thead>
+                        <tbody>
+                        <tr th:each="r : ${todayRegs}" th:style="${r.regType=='EMERGENCY'} ? 'background:#fef2f2' : ''">
+                            <td th:text="${r.regNo}" style="font-size:12px"></td>
+                            <td th:text="${r.patientName}"></td>
+                            <td th:text="${r.patientPhone} ?: '—'"></td>
+                            <td th:text="${T(com.hospital.util.SlotText).patientTypeText(r.patientType)}"></td>
+                            <td>
+                                <span th:text="${T(com.hospital.util.SlotText).regType(r.regType)}"></span>
+                                <span class="badge danger" th:if="${r.regType=='EMERGENCY'}">优先</span>
+                            </td>
+                            <td th:text="${T(com.hospital.util.SlotText).slot(r.timeSlot)}"></td>
+                            <td th:text="'¥' + ${r.fee}"></td>
+                            <td><span class="badge" th:classappend="${r.status=='PAID'} ? 'success' : 'warning'"
+                                    th:text="${T(com.hospital.util.SlotText).regStatus(r.status)}"></span></td>
+                            <td>
+                                <a class="btn sm" th:href="@{/doctor/visit/{id}(id=${r.id})}"
+                                   th:if="${r.status=='BOOKED' or r.status=='PAID'}">接诊</a>
+                                <a class="btn sm ghost" th:href="@{/doctor/patient/records/{pid}(pid=${r.patientId})}">病历</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(todayRegs)}"><td colspan="9" style="color:var(--text-muted)">今天暂无预约患者</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

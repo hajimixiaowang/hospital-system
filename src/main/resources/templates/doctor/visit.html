@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('就诊操作台')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: doctor-sidebar('home')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('就诊操作台', ${user})"></header>
+        <div class="content">
+
+            <div class="msg error" th:if="${msg}" th:text="${msg}"></div>
+
+            <div class="card">
+                <div class="card-head">
+                    <h2>📋 挂号单信息</h2>
+                    <div>
+                        <span class="badge info" th:text="${T(com.hospital.util.SlotText).regType(console.reg.regType)}"></span>
+                        <span class="badge danger" th:if="${console.reg.regType=='EMERGENCY'}">优先处置</span>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px">
+                    <div><span style="color:var(--text-muted)">挂号单号：</span><span th:text="${console.reg.regNo}"></span></div>
+                    <div><span style="color:var(--text-muted)">患者：</span><span th:text="${console.reg.patientName} + '（' + ${T(com.hospital.util.SlotText).patientTypeText(console.reg.patientType)} + '）'"></span></div>
+                    <div><span style="color:var(--text-muted)">科室：</span><span th:text="${console.reg.deptName}"></span></div>
+                    <div><span style="color:var(--text-muted)">医生：</span><span th:text="${console.reg.doctorName} + ' · ' + ${console.reg.title}"></span></div>
+                    <div><span style="color:var(--text-muted)">就诊时间：</span><span th:text="${console.reg.workDate} + ' ' + ${T(com.hospital.util.SlotText).slot(console.reg.timeSlot)}"></span></div>
+                    <div><span style="color:var(--text-muted)">挂号费：</span><b style="color:var(--primary)" th:text="'¥' + ${console.reg.fee}"></b></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h2>🩺 就诊流程</h2>
+                    <div class="hint" th:text="${console.templateName}"></div></div>
+
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">
+                    <th:block th:each="s : ${console.steps}">
+                        <div style="display:flex;align-items:center;gap:10px">
+                            <div style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;font-size:13px"
+                                 th:classappend="${T(com.hospital.util.SlotText).isDone(console.record, s.name())} ? '' : (${console.nextStep != null && console.nextStep.name()==s.name()} ? '' : '')"
+                                 th:style="${T(com.hospital.util.SlotText).isDone(console.record, s.name())} ? 'background:var(--success-bg);color:#047857' : (${console.nextStep != null && console.nextStep.name()==s.name()} ? 'background:var(--primary);color:#fff' : 'background:#f1f5f9;color:var(--text-muted)')">
+                                <span th:text="${T(com.hospital.util.SlotText).isDone(console.record, s.name())} ? '✓' : (${console.nextStep != null && console.nextStep.name()==s.name()} ? '▶' : '○')"></span>
+                                <span th:text="${s.text}"></span>
+                            </div>
+                            <span th:if="${!sStat.last}" style="color:#cbd5e1">—</span>
+                        </div>
+                    </th:block>
+                </div>
+
+                <th:block th:if="${console.nextStep != null}">
+                    <form th:if="${console.nextStep.name()=='PRESCRIBE'}" method="post" th:action="@{/doctor/visit/step}">
+                        <input type="hidden" name="registrationId" th:value="${console.reg.id}">
+                        <input type="hidden" name="step" value="PRESCRIBE">
+                        <div class="form-row">
+                            <label>诊断（必填）</label>
+                            <textarea name="diagnosis" rows="2" placeholder="如：急性上呼吸道感染" required></textarea>
+                        </div>
+                        <div class="form-row">
+                            <label>处方（选填）</label>
+                            <textarea name="prescription" rows="2" placeholder="药品与用法用量"></textarea>
+                        </div>
+                        <button class="btn" type="submit">提交并完成开方</button>
+                    </form>
+                    <form th:unless="${console.nextStep.name()=='PRESCRIBE'}" method="post"
+                          th:action="@{/doctor/visit/step}" style="margin-top:4px">
+                        <input type="hidden" name="registrationId" th:value="${console.reg.id}">
+                        <input type="hidden" name="step" th:value="${console.nextStep.name()}">
+                        <button class="btn" type="submit" th:text="'执行【' + ${console.nextStep.text} + '】'"></button>
+                    </form>
+                </th:block>
+
+                <div th:if="${console.nextStep == null}" class="msg success" style="margin-top:14px">
+                    ✅ 就诊已完成。诊断与处方已写入患者就诊记录，系统已通过<b>观察者模式</b>向患者推送「就诊完成」通知。
+                </div>
+            </div>
+
+            <div class="card" th:if="${console.record != null && console.record.diagnosis != null}">
+                <div class="card-head"><h2>💊 诊断与处方</h2></div>
+                <p><b>诊断：</b><span th:text="${console.record.diagnosis}"></span></p>
+                <p style="margin-top:8px"><b>处方：</b><span th:text="${console.record.prescription} ?: '—'"></span></p>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

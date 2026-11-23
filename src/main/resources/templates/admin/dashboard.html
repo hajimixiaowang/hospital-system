@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('数据看板')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: admin-sidebar('dashboard')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('运营数据看板', ${user})"></header>
+        <div class="content">
+
+            <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+                <div class="stat"><div class="icon blue">📅</div>
+                    <div><div class="num" th:text="${overview.todayRegs}">0</div><div class="label">今日挂号</div></div></div>
+                <div class="stat"><div class="icon green">📋</div>
+                    <div><div class="num" th:text="${overview.totalRegs}">0</div><div class="label">累计挂号</div></div></div>
+                <div class="stat"><div class="icon amber">💰</div>
+                    <div><div class="num" th:text="'¥' + ${overview.totalIncome}">0</div><div class="label">挂号总收入</div></div></div>
+                <div class="stat"><div class="icon red">👥</div>
+                    <div><div class="num" th:text="${overview.totalPatients}">0</div><div class="label">患者总数</div></div></div>
+                <div class="stat"><div class="icon blue">👨‍⚕️</div>
+                    <div><div class="num" th:text="${overview.totalDoctors}">0</div><div class="label">医生总数</div></div></div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:20px">
+                <div class="card" style="margin-bottom:0">
+                    <div class="card-head"><h2>📈 近 7 日挂号趋势</h2></div>
+                    <div class="chart">
+                        <div class="bar-col" th:each="t : ${trend}">
+                            <div class="bar-val" th:text="${t.cnt}"></div>
+                            <div class="bar" th:style="'height:' + (${t.cnt} * 18) + 'px'"></div>
+                            <div class="bar-label" th:text="${#strings.substring(t.day.toString(), 5)}"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-bottom:0">
+                    <div class="card-head"><h2>🏥 科室挂号统计</h2></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>科室</th><th>挂号量</th><th>就诊量</th><th>收入</th></tr></thead>
+                            <tbody>
+                            <tr th:each="s : ${deptStats}">
+                                <td th:text="${s.deptName}"></td>
+                                <td th:text="${s.regCount}"></td>
+                                <td th:text="${s.visitedCount}"></td>
+                                <td th:text="'¥' + ${s.totalFee}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提示 · 医诊通</title>
+    <link rel="stylesheet" th:href="@{/css/style.css?v=20261123b}">
+</head>
+<body>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="logo">⚠️</div>
+        <h1>操作提示</h1>
+        <div class="sub">请留意以下信息</div>
+        <div class="msg error" th:text="${msg} ?: '发生未知错误'"></div>
+        <div style="display:flex;gap:12px;justify-content:center;margin-top:16px">
+            <a class="btn ghost" href="javascript:history.back()">返回上一页</a>
+            <a class="btn" th:href="@{/login}">回到登录</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

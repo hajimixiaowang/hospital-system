@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('就诊须知')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: patient-sidebar('guide')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('就诊须知', ${user})"></header>
+        <div class="content">
+
+            <div class="card">
+                <div class="card-head"><h2>📝 预约挂号须知</h2></div>
+                <div class="announce-item">
+                    <div class="t">1. 预约方式</div>
+                    <div class="c">登录后在「预约挂号」中选择医生与号源，可约普通门诊、专家门诊与急诊三种类型；下单后请在「我的订单」中完成支付，未支付订单可随时取消。</div>
+                </div>
+                <div class="announce-item">
+                    <div class="t">2. 费用结算</div>
+                    <div class="c">挂号费 = 科室基础费 + 医生职称附加费。普通患者全额结算；医保患者 8 折；学生患者 5 折；夜间时段（18:00-21:00）统一上浮 20%。系统按您的患者类型自动计算。</div>
+                </div>
+                <div class="announce-item">
+                    <div class="t">3. 退号与退款</div>
+                    <div class="c">就诊前可在「我的订单」中取消预约，号源立即释放；已支付订单取消后挂号费自动原路退款（1~3 个工作日到账）。已就诊订单不可取消。</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h2>🏥 到院就诊须知</h2></div>
+                <div class="announce-item">
+                    <div class="t">1. 签到候诊</div>
+                    <div class="c">请在号源对应时段开始前 15 分钟到科室分诊台，出示挂号单号完成签到，按签到顺序候诊；急诊患者优先处置。</div>
+                </div>
+                <div class="announce-item">
+                    <div class="t">2. 就诊时间</div>
+                    <div class="c">上午 8:00-12:00，下午 14:00-17:30，夜间门诊 18:00-21:00（内科、急诊开诊）。</div>
+                </div>
+                <div class="announce-item">
+                    <div class="t">3. 随身携带</div>
+                    <div class="c">有效身份证件、医保卡（医保患者）、既往病历与检查报告（复诊患者）。儿童就诊请由监护人陪同。</div>
+                </div>
+                <div class="announce-item">
+                    <div class="t">4. 温馨提示</div>
+                    <div class="c">突发危重情况请立即拨打 120 或直接前往急诊科，不要等待线上预约。就诊过程中如有疑问，可在「AI 助手」中咨询或联系导诊台。</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('患者首页')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: patient-sidebar('home')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('患者首页', ${user})"></header>
+        <div class="content">
+
+            <div class="stat-grid">
+                <div class="stat">
+                    <div class="icon blue">📋</div>
+                    <div><div class="num" th:text="${regCount}">0</div><div class="label">我的挂号</div></div>
+                </div>
+                <div class="stat">
+                    <div class="icon amber">💰</div>
+                    <div><div class="num" th:text="${toPay}">0</div><div class="label">待支付</div></div>
+                </div>
+                <div class="stat">
+                    <div class="icon green">💊</div>
+                    <div><div class="num" th:text="${visited}">0</div><div class="label">已就诊</div></div>
+                </div>
+                <div class="stat">
+                    <div class="icon red">⭐</div>
+                    <div><div class="num" th:text="${favCount}">0</div><div class="label">收藏医生</div></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <h2>📢 医院公告</h2>
+                </div>
+                <div th:each="a : ${announcements}" class="announce-item">
+                    <div class="t" th:text="${a.title}"></div>
+                    <div class="c" th:text="${a.content}"></div>
+                    <div class="d" th:text="'发布于 ' + ${#temporals.format(a.createTime, 'yyyy-MM-dd HH:mm')}"></div>
+                </div>
+                <div th:if="${#lists.isEmpty(announcements)}" style="color:var(--text-muted);font-size:14px">暂无公告</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+                <div class="card" style="margin-bottom:0">
+                    <div class="card-head"><h2>🔔 最近通知</h2>
+                        <a th:href="@{/patient/notifications}" style="font-size:13px;color:var(--primary)">全部</a></div>
+                    <div th:each="n : ${recentNotices}" class="announce-item" th:if="${nStat.index < 5}">
+                        <div class="t" th:text="${n.title}"></div>
+                        <div class="c" th:text="${n.content}"></div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(recentNotices)}" style="color:var(--text-muted);font-size:14px">暂无通知</div>
+                </div>
+                <div class="card" style="margin-bottom:0">
+                    <div class="card-head"><h2>⭐ 我的收藏医生</h2>
+                        <a th:href="@{/patient/favorites}" style="font-size:13px;color:var(--primary)">管理</a></div>
+                    <div th:each="f : ${favorites}" class="announce-item" th:if="${fStat.index < 5}">
+                        <div class="t" th:text="${f.doctorName} + ' · ' + ${f.title}"></div>
+                        <div class="c" th:text="${f.deptName} + ' · ' + ${f.goodAt}"></div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(favorites)}" style="color:var(--text-muted);font-size:14px">还没有收藏医生</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

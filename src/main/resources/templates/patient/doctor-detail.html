@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('医生详情')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: patient-sidebar('doctors')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('医生详情', ${user})"></header>
+        <div class="content">
+
+            <div class="card">
+                <div style="display:flex;gap:20px;align-items:flex-start">
+                    <div class="avatar" style="width:76px;height:76px;border-radius:18px;background:var(--primary-grad);color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:600;flex-shrink:0"
+                         th:text="${doctor.doctorName.substring(0,1)}">医</div>
+                    <div style="flex:1">
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <h2 th:text="${doctor.doctorName}"></h2>
+                            <span class="badge info" th:text="${doctor.title}"></span>
+                            <span class="badge success" th:text="${doctor.deptName}"></span>
+                        </div>
+                        <div style="color:var(--text-muted);font-size:13px;margin:8px 0 12px" th:text="${doctor.intro}"></div>
+                        <div class="stars" style="font-size:16px">★★★★★</div>
+                        <div style="font-size:13px;color:var(--text-muted)">
+                            <span th:text="'综合评分 ' + ${#numbers.formatDecimal(rating.avgRating,1,1)}"></span>
+                            <span th:text="' · ' + ${rating.cnt} + ' 条评价'"></span>
+                        </div>
+                    </div>
+                    <form method="post" th:action="@{/patient/favorite/{id}(id=${doctor.id})}">
+                        <button class="btn" th:classappend="${favorited} ? 'ghost' : ''" type="submit"
+                                th:text="${favorited} ? '★ 已收藏' : '☆ 收藏医生'"></button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h2>📅 可预约排班</h2>
+                    <div class="hint">挂号费按 科室/职称/时段/患者类型 多因素计算（策略模式）</div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>日期</th><th>时段</th><th>剩余号源</th><th>您的应付</th><th>挂号类型</th><th>操作</th></tr></thead>
+                        <tbody>
+                        <tr th:each="sv : ${schedules}">
+                            <td th:text="${sv.workDate}"></td>
+                            <td th:text="${T(com.hospital.util.SlotText).slot(sv.timeSlot)}"></td>
+                            <td><span class="badge" th:classappend="${sv.remainCount < 5} ? 'warning' : 'success'"
+                                    th:text="${sv.remainCount} + ' / ' + ${sv.totalCount}"></span></td>
+                            <td><b style="color:var(--primary)" th:text="'¥' + ${feePreview[sv.id]}"></b></td>
+                            <td>
+                                <form method="post" th:action="@{/patient/book}">
+                                    <input type="hidden" name="scheduleId" th:value="${sv.id}">
+                                    <select name="regType" style="width:auto;display:inline-block">
+                                        <option value="NORMAL">普通</option>
+                                        <option value="EXPERT">专家</option>
+                                        <option value="EMERGENCY">急诊</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" th:action="@{/patient/book}" style="display:inline">
+                                    <input type="hidden" name="scheduleId" th:value="${sv.id}">
+                                    <input type="hidden" name="regType" value="NORMAL">
+                                    <button class="btn sm" type="submit">立即挂号</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(schedules)}"><td colspan="6" style="color:var(--text-muted)">该医生暂无可约号源</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h2>💬 患者评价</h2></div>
+                <div th:each="r : ${reviews}" class="announce-item">
+                    <div class="t">
+                        <span th:text="${r.patientName} + ' · ' + ${r.deptName}"></span>
+                        <span class="stars" th:text="${r.rating} + ' 星'"></span>
+                    </div>
+                    <div class="c" th:text="${r.content} ?: '（无文字评价）'"></div>
+                    <div class="d" th:text="${#temporals.format(r.createTime, 'yyyy-MM-dd')}"></div>
+                </div>
+                <div th:if="${#lists.isEmpty(reviews)}" style="color:var(--text-muted);font-size:14px">暂无评价</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

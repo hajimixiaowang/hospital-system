@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('个人病历')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: patient-sidebar('records')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('个人病历', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head"><h2>📖 个人病历</h2>
+                    <div class="hint">就诊完成后可对本次就诊进行评价</div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>单号</th><th>科室</th><th>医生</th><th>就诊时间</th><th>诊断</th><th>处方</th><th>评价</th></tr></thead>
+                        <tbody>
+                        <tr th:each="v : ${records}">
+                            <td th:text="${v.regNo}" style="font-size:12px"></td>
+                            <td th:text="${v.deptName}"></td>
+                            <td th:text="${v.doctorName}"></td>
+                            <td th:text="${v.workDate} + ' ' + ${T(com.hospital.util.SlotText).slot(v.timeSlot)}"></td>
+                            <td th:text="${v.diagnosis} ?: '—'"></td>
+                            <td th:text="${v.prescription} ?: '—'"></td>
+                            <td>
+                                <a class="btn sm ghost" th:href="@{/patient/review/{id}(id=${v.registrationId})}"
+                                   th:if="${!reviewed[v.registrationId]}">去评价</a>
+                                <span class="badge success" th:if="${reviewed[v.registrationId]}">已评价</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(records)}"><td colspan="7" style="color:var(--text-muted)">暂无就诊记录</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

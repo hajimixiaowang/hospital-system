@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('我的收藏')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: patient-sidebar('favorites')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('我的收藏', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head"><h2>⭐ 收藏的医生</h2></div>
+                <div class="doctor-grid">
+                    <div class="doctor-card" th:each="f : ${favorites}">
+                        <div class="head">
+                            <div class="avatar" th:text="${f.doctorName.substring(0,1)}">医</div>
+                            <div>
+                                <div class="name" th:text="${f.doctorName}"></div>
+                                <div class="title" th:text="${f.deptName} + ' · ' + ${f.title}"></div>
+                            </div>
+                        </div>
+                        <div class="tags"><span class="tag" th:text="${f.goodAt}"></span></div>
+                        <div class="foot">
+                            <a class="btn sm ghost" th:href="@{/patient/doctor/{id}(id=${f.doctorId})}">查看详情</a>
+                            <form method="post" th:action="@{/patient/favorite/{id}(id=${f.doctorId})}">
+                                <button class="btn danger sm" type="submit">取消收藏</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(favorites)}" style="color:var(--text-muted)">
+                    还没有收藏医生，<a th:href="@{/patient/doctors}" style="color:var(--primary)">去逛逛</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

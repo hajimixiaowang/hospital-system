@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head('预约挂号')"></head>
+<body>
+<div class="layout">
+    <aside th:replace="fragments :: patient-sidebar('booking')"></aside>
+    <div class="main">
+        <header th:replace="fragments :: topbar('预约挂号', ${user})"></header>
+        <div class="content">
+            <div class="card">
+                <div class="card-head">
+                    <h2>📅 全院可约号源</h2>
+                    <div class="hint">费用已按您的患者类型实时计算 · 下单后在"我的订单"中支付</div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>日期</th><th>时段</th><th>科室</th><th>医生</th><th>职称</th><th>剩余</th><th>应付</th><th>挂号</th></tr></thead>
+                        <tbody>
+                        <tr th:each="sv : ${schedules}">
+                            <td th:text="${sv.workDate}"></td>
+                            <td th:text="${T(com.hospital.util.SlotText).slot(sv.timeSlot)}"></td>
+                            <td th:text="${sv.deptName}"></td>
+                            <td th:text="${sv.doctorName}"></td>
+                            <td th:text="${sv.title}"></td>
+                            <td><span class="badge" th:classappend="${sv.remainCount < 5} ? 'warning' : 'success'"
+                                    th:text="${sv.remainCount} + '/' + ${sv.totalCount}"></span></td>
+                            <td><b style="color:var(--primary)" th:text="'¥' + ${feePreview[sv.id]}"></b></td>
+                            <td>
+                                <form method="post" th:action="@{/patient/book}" style="display:flex;gap:6px">
+                                    <input type="hidden" name="scheduleId" th:value="${sv.id}">
+                                    <select name="regType" style="width:auto">
+                                        <option value="NORMAL">普通</option>
+                                        <option value="EXPERT">专家</option>
+                                        <option value="EMERGENCY">急诊</option>
+                                    </select>
+                                    <button class="btn sm" type="submit">挂号</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(schedules)}"><td colspan="8" style="color:var(--text-muted)">暂无可约号源</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

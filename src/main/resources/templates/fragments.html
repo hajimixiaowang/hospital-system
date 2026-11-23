@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' · ' + ${hospitalName}">医院门诊挂号系统</title>
+    <link rel="stylesheet" th:href="@{/css/style.css?v=20261123b}">
+</head>
+<body>
+
+<!-- ==================== 顶部栏 ==================== -->
+<header th:fragment="topbar(title,user)" class="topbar">
+    <div class="title" th:text="${title}"></div>
+    <div class="spacer"></div>
+    <div class="user">
+        <div class="avatar" th:text="${user.realName} != null ? ${user.realName.substring(0,1)} : 'U'"></div>
+        <div class="meta">
+            <div class="name" th:text="${user.realName}"></div>
+            <div class="role" th:text="${T(com.hospital.util.SlotText).roleText(user.role)}"></div>
+        </div>
+        <a class="btn ghost sm" th:href="@{/logout}" style="margin-left:10px">退出</a>
+    </div>
+</header>
+
+<!-- ==================== 患者侧边栏（8项：按功能结构图） ==================== -->
+<aside th:fragment="patient-sidebar(active)" class="sidebar">
+    <div class="brand">
+        <div class="logo">🏥</div>
+        <div>
+            <div class="name" th:text="${hospitalName}"></div>
+            <div class="sub">门诊挂号系统 · 患者端</div>
+        </div>
+    </div>
+    <nav class="nav">
+        <div class="group">门诊服务</div>
+        <a th:href="@{/patient}" th:classappend="${active=='home'} ? 'active'"><span class="ico">🏠</span><span>首页展示</span></a>
+        <a th:href="@{/patient/doctors}" th:classappend="${active=='doctors'} ? 'active'"><span class="ico">👨‍⚕️</span><span>医生科室查看</span></a>
+        <a th:href="@{/patient/booking}" th:classappend="${active=='booking'} ? 'active'"><span class="ico">📅</span><span>预约挂号</span></a>
+        <a th:href="@{/patient/registrations}" th:classappend="${active=='registrations'} ? 'active'"><span class="ico">📋</span><span>我的订单</span></a>
+        <a th:href="@{/patient/records}" th:classappend="${active=='records'} ? 'active'"><span class="ico">📖</span><span>个人病历</span></a>
+        <a th:href="@{/patient/guide}" th:classappend="${active=='guide'} ? 'active'"><span class="ico">📢</span><span>就诊须知</span></a>
+        <div class="group">智能与个人</div>
+        <a th:href="@{/patient/assistant}" th:classappend="${active=='assistant'} ? 'active'"><span class="ico">🤖</span><span>AI 助手</span></a>
+        <a th:href="@{/patient/profile}" th:classappend="${active=='profile'} ? 'active'"><span class="ico">⚙️</span><span>个人中心</span></a>
+    </nav>
+    <div class="foot" th:text="${servicePhone} + ' · 客服'"></div>
+</aside>
+
+<!-- ==================== 医生侧边栏（7项：按功能结构图） ==================== -->
+<aside th:fragment="doctor-sidebar(active)" class="sidebar">
+    <div class="brand">
+        <div class="logo">🩺</div>
+        <div>
+            <div class="name" th:text="${hospitalName}"></div>
+            <div class="sub">门诊挂号系统 · 医生端</div>
+        </div>
+    </div>
+    <nav class="nav">
+        <div class="group">诊疗工作</div>
+        <a th:href="@{/doctor}" th:classappend="${active=='home'} ? 'active'"><span class="ico">🏠</span><span>工作台</span></a>
+        <a th:href="@{/doctor/today}" th:classappend="${active=='today'} ? 'active'"><span class="ico">👥</span><span>今日患者列表</span></a>
+        <a th:href="@{/doctor/consult}" th:classappend="${active=='consult'} ? 'active'"><span class="ico">🩺</span><span>接诊管理</span></a>
+        <a th:href="@{/doctor/schedules}" th:classappend="${active=='schedules'} ? 'active'"><span class="ico">🗓️</span><span>排班查看</span></a>
+        <div class="group">信息与助手</div>
+        <a th:href="@{/doctor/assistant}" th:classappend="${active=='assistant'} ? 'active'"><span class="ico">🤖</span><span>AI 助手</span></a>
+        <a th:href="@{/doctor/announcements}" th:classappend="${active=='announcements'} ? 'active'"><span class="ico">📢</span><span>公告查看</span></a>
+        <a th:href="@{/doctor/profile}" th:classappend="${active=='profile'} ? 'active'"><span class="ico">⚙️</span><span>医生信息管理</span></a>
+    </nav>
+    <div class="foot">门诊挂号系统</div>
+</aside>
+
+<!-- ==================== 管理侧边栏（10项：按功能结构图） ==================== -->
+<aside th:fragment="admin-sidebar(active)" class="sidebar">
+    <div class="brand">
+        <div class="logo">⚙️</div>
+        <div>
+            <div class="name" th:text="${hospitalName}"></div>
+            <div class="sub">门诊挂号系统 · 管理端</div>
+        </div>
+    </div>
+    <nav class="nav">
+        <div class="group">运营总览</div>
+        <a th:href="@{/admin}" th:classappend="${active=='dashboard'} ? 'active'"><span class="ico">📊</span><span>数据看板</span></a>
+        <div class="group">业务管理</div>
+        <a th:href="@{/admin/departments}" th:classappend="${active=='departments'} ? 'active'"><span class="ico">🏥</span><span>科室管理</span></a>
+        <a th:href="@{/admin/schedules}" th:classappend="${active=='schedules'} ? 'active'"><span class="ico">🗓️</span><span>号源管理</span></a>
+        <a th:href="@{/admin/orders}" th:classappend="${active=='orders'} ? 'active'"><span class="ico">📋</span><span>订单管理</span></a>
+        <a th:href="@{/admin/doctors}" th:classappend="${active=='doctors'} ? 'active'"><span class="ico">👨‍⚕️</span><span>医生管理</span></a>
+        <a th:href="@{/admin/patients}" th:classappend="${active=='patients'} ? 'active'"><span class="ico">👥</span><span>患者管理</span></a>
+        <a th:href="@{/admin/announcements}" th:classappend="${active=='announcements'} ? 'active'"><span class="ico">📢</span><span>公告管理</span></a>
+        <div class="group">系统</div>
+        <a th:href="@{/admin/knowledge}" th:classappend="${active=='knowledge'} ? 'active'"><span class="ico">🧠</span><span>知识库管理</span></a>
+        <a th:href="@{/admin/settings}" th:classappend="${active=='settings'} ? 'active'"><span class="ico">🔧</span><span>系统设置</span></a>
+        <a th:href="@{/admin/profile}" th:classappend="${active=='profile'} ? 'active'"><span class="ico">👤</span><span>个人中心</span></a>
+    </nav>
+    <div class="foot">门诊挂号系统</div>
+</aside>
+
+</body>
+</html>
